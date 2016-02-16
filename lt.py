@@ -62,7 +62,7 @@ class node_original:
     assert(self.known)
     for d in pop_edges(self): # d is for droplet
       for j in range(self.blocksize):
-        d.data[j] ^= self.data[j][0]
+        d.data[j] ^= self.data[j]
       if len(d.edges) == 1:
         d.process()
 
@@ -82,7 +82,7 @@ class node_droplet:
         original_nodes[k].edges.add(self)
       else:
         for j in range(blocksize):
-          self.data[j] ^= original_nodes[k].data[j][0]
+          self.data[j] ^= original_nodes[k].data[j]
 
     # assert(len(self.edges) == degree) - This isn't true for recurring indices.
 
