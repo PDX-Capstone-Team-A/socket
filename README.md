@@ -8,12 +8,13 @@ licenced under the MIT license, as given in LICENSE.
 The scripts can be used to send a file through UDP using LT fountain codes to
 ensure that the file will eventually be fully received.  In these instructions,
 server is the computer that is going to send the file and client is the computer
-that is going to receive the file.  <address> is the address of the server,
-<filename> is the name of the file to send, and <filelength> is the length in
+that is going to receive the file.  "address" is the address of the server,
+"filename" is the name of the file to send, and "filelength" is the length in
 bytes of the file to send.
 
 On the server run the command
 `python3 udp.py -s -H <address> <filename>`
+
 Then, on the client run the command
 `python3 udp.py -H <address> -l <filelength> <filename>`
 
