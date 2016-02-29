@@ -3,12 +3,21 @@ import socket
 import argparse
 from pprint import pprint as pp
 from lt import *
+import struct
 from struct import *
 
 BUF_SIZE=512
+multicast_group = ('224.3.29.71', 10000)
+multicast_addr = '224.3.29.71'
+server_address = ('', 1000)
 
 def fountain_client(ns):
+  group = socket.inet_aton(multicast_addr)
+  mreq = struct.pack('4sL', group, socket.INADDR_ANY)
+
   s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  s.bind(server_address)
+  s.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
   bucket = lt_decode(ns.length, 504)
   
   s.sendto(b'', (ns.host, ns.port))
@@ -29,7 +38,9 @@ def fountain_client(ns):
 
 def fountain_server(ns):
   s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-  s.bind((ns.host, ns.port))
+  ttl = struct.pack('b', 1)
+  s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
+  #s.bind((ns.host, ns.port))
 
   with open(ns.filename, 'rb') as f:
     buf = f.read()
@@ -43,7 +54,7 @@ def fountain_server(ns):
 
     while 1:
       d = next(fountain)
-      s.sendto(pack('!II504s', d['degree'], d['seed'], d['data']), a)
+      s.sendto(pack('!II504s', d['degree'], d['seed'], d['data']), multicast_group)
   
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
